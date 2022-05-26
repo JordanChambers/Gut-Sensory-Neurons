@@ -1,0 +1,71 @@
+{load_file("stdlib.hoc")}
+celsius=36
+{load_file("soma.hoc")}
+access soma
+
+///// Conductance changes required to produce an additive effect in the calcium concentration in the second voltage ramp /////
+//gcaca_jcal = 0.01e-4
+//taur_jcal = 10e1
+//gbar_can = 4e-2
+
+//integration time step
+dt = 0.01
+tstop = 12200
+
+//inserting current clamp at soma
+access soma
+objectvar stim
+stim = new jSEClamp(0.5)
+stim.dur1 = 100
+stim.amp1 = -80
+stim.dur2 = 4000
+stim.amp2 = -120
+stim.dur3 = 2000
+stim.amp3 = 0
+stim.rs = 4
+
+//for writing result files
+objref vrec[1]
+vrec[0] = new Vector()
+{vrec[0].record(&stim.i, dt)}
+objref tvec
+tvec = new Vector()
+{tvec.record(&t, dt)}
+objref all
+all = new File()
+strdef datei
+
+//graph
+objref gmem
+gmem = new Graph()
+gmem.size(0, tstop, -2, 2)
+{gmem.addvar("Membrane current", &stim.i, 2, 1)}
+gmem.begin()
+
+//defining some functions
+proc run_sn() {
+    sprint(datei, "fig5currents.txt")
+    all.wopen(datei)
+    soma v = -55
+    finitialize()
+    while (t < tstop) {
+	fadvance()
+	all.printf("%g %g %g %g %g %g %g %g %g %g %g\n", t, cai, jina13_nav13, jina17_nav17, ica, jikdr_kdr, jika_ka, jikcaf_kca_fast, iother2, jikcas_kca_slow, jiih_ih)
+	gmem.plot(t)
+    }
+    gmem.flush()
+    all.close
+    write_file()
+}
+
+proc write_file() {
+    sprint(datei, "./fig5mem.txt")
+    all.wopen(datei)
+    for i=0, vrec[0].size()-1 {
+        all.printf("%g %g\n", tvec.x(i), vrec[0].x(i))
+    }
+    all.close
+}
+
+run_sn()
+//quit()

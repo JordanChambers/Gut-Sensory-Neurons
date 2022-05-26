@@ -1,0 +1,17 @@
+//moddir mod
+load_file("nrngui.hoc")
+pwmcnt = PWManager[0].count
+
+proc hide_xpanel() {
+  PWManager[0].hide(pwmcnt-1)
+}
+
+xpanel("Chambers et al., 2014")
+  xbutton("Fig 1", "{ hide_xpanel() load_file(\"fig1.hoc\") }")
+  xbutton("Fig 2", "{ hide_xpanel() load_file(\"fig2.hoc\") }")
+  xbutton("Fig 3", "{ hide_xpanel() load_file(\"fig3.hoc\") }")
+  xbutton("Quit to restart to generate another figure", "quit()")
+xpanel()
+
+
+

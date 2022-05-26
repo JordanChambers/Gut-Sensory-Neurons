@@ -1,0 +1,87 @@
+{load_file("stdlib.hoc")}
+celsius=36
+{load_file("soma.hoc")}
+
+//conductances
+access soma
+gbar_kca_slow = 0.5e0
+gbar_cansc = 0.5e-4
+gbar_ih = 0.5e-4
+
+//integration time step
+dt = 0.01
+tstop = 150
+
+//inserting current clamp at soma
+access soma
+objectvar stim
+stim = new IClamp(0.5)
+stim.del = 100 
+stim.dur = 2
+stim.amp = 0.5
+
+//for writing result files
+objref vrec[1]
+vrec[0] = new Vector()
+{vrec[0].record(&soma.v(0.5), dt)}
+objref tvec
+tvec = new Vector()
+{tvec.record(&t, dt)}
+objref all
+all = new File()
+strdef datei
+
+//graphs
+objref gmem
+gmem = new Graph()
+gmem.size(0, tstop, -100, 50)
+{gmem.addvar("Membrane Potential", &soma.v(0.5), 2, 1)}
+gmem.begin()
+objref gcur
+gcur = new Graph()
+gcur.size(0, tstop, -1, 1)
+{gcur.addvar("Intracellular calcium", &soma.cai(0.1), 2, 1)}
+{gcur.addvar("Nav13", &soma.jina13_nav13(0.1), 3, 1)}
+{gcur.addvar("Nav17", &soma.jina17_nav17(0.1), 4, 1)}
+{gcur.addvar("Nav19", &soma.jina19_nap(0.1), 5, 1)}
+{gcur.addvar("N-type Ca2+", &soma.ica(0.1), 6, 1)}
+{gcur.addvar("Kdr", &soma.jikdr_kdr(0.1), 7, 1)}
+{gcur.addvar("Ka", &soma.jika_ka(0.1), 8, 1)}
+{gcur.addvar("BK", &soma.jikcaf_kca_fast(0.1), 9, 1)}
+{gcur.addvar("NSCa2+", &soma.iother2(0.1), 10, 1)}
+{gcur.addvar("IK", &soma.jikcas_kca_slow(0.1), 11, 1)}
+{gcur.addvar("Ih", &soma.jiih_ih(0.1), 12, 1)}
+
+
+//defining some functions
+proc run_sn() {
+    sprint(datei, "./fig1currents.txt")
+    all.wopen(datei)
+    soma v = -55
+    finitialize()
+    gcur.begin()
+    while (t < tstop) {
+	fadvance()
+	all.printf("%g %g %g %g %g %g %g %g %g %g %g %g\n", t, cai, jina13_nav13, jina17_nav17, jina19_nap, ica, jikdr_kdr, jika_ka, jikcaf_kca_fast, iother2, jikcas_kca_slow, jiih_ih)
+	//all.printf("%g %g\n", t, cai)
+	gmem.plot(t)
+	gcur.plot(t)
+    }
+    gmem.flush()
+    gcur.flush()
+    all.close
+    write_file()
+}
+
+proc write_file() {
+    //sprint(datei, "./datapdp/pdp_can%d_kcaf%d_kcas%d_ih%d_jstim%d.dat", jcansc, jkcaf, jkcas, jih, jstim)
+    sprint(datei, "./fig1mem.txt")
+    all.wopen(datei)
+    for i=0, vrec[0].size()-1 {
+        all.printf("%g %g\n", tvec.x(i), vrec[0].x(i))
+    }
+    all.close
+}
+
+run_sn()
+//quit()

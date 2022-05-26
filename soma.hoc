@@ -1,0 +1,142 @@
+create soma
+soma {
+    diam = 25.0
+    L = 49.0
+    Ra = 30
+    cm = 1
+}
+soma {
+    //nseg = int((2*L/(0.1*lambda_f(100))+.9)/2)*2 + 1
+    nseg = 10
+}
+
+soma {
+    insert pas
+    e_pas = -55.0
+    g_pas = 4e-5
+    
+    insert nav13
+    gbar_nav13 = 3e-1
+    sh_nav13 = 8
+    tha_nav13 = -30.5
+    qa_nav13 = 4.5
+    Ra_nav13 = 0.4
+    Rb_nav13 = 0.135
+    thi1_nav13 = -30
+    thi2_nav13 = -30
+    qd_nav13 = 1.5
+    qg_nav13 = 1.5
+    mmin_nav13 = 0.02	
+    hmin_nav13 = 0.5			
+    q10_nav13 = 2
+    Rg_nav13 = 0.01
+    Rd_nav13 = 0.03
+    qq_nav13 = 10
+    tq_nav13 = -50
+    thinf_nav13 = -55
+    qinf_nav13 = 4
+    vhalfs_nav13 = -60
+    a0s_nav13 = 0.0003
+    zetas_nav13 = 12
+    gms_nav13 = 0.2
+    smax_nav13 = 10
+    vvh_nav13 = -58
+    vvs_nav13 = 2
+    ar2_nav13 = 1
+    
+    insert nav17
+    gnabar_nav17 = 1e-1
+    mam_nav17 = 5
+    sam_nav17 = -12.08
+    mbm_nav17 = 72.7
+    sbm_nav17 = 16.7
+    mah_nav17 = 122.35
+    sah_nav17 = 15.29
+    mas_nav17 = 93.9
+    sas_nav17 = 16.6
+    alphaD_nav17 = 0.05
+    betaD_nav17 = 0.02
+    
+    insert nap
+    gbar_nap = 1e-5
+    
+    insert jcal
+    TotalBuffer_jcal = 5e-3
+    k1buf_jcal = 3
+    k2buf_jcal = 0.005
+    depth_jcal = 1
+    taur_jcal = 1e1
+    cainf_jcal = 5e-5
+    cain_jcal = 0.5e0
+    gcaca_jcal = 0.2e-4
+    cacamid_jcal = 1e-4
+    cacas_jcal = 2e-5
+    
+    insert can
+    gbar_can = 4e-2
+    mafac_can = 0.1
+    mamid_can = -15
+    maslope_can = 5
+    mbfac_can = 0.5
+    mbmid_can = -5
+    mbslope_can = 10
+    hafac_can = 0.01
+    hamid_can = 50
+    haslope_can = 15
+    hbfac_can = 0.2
+    hbmid_can = 40
+    hbslope_can = 17
+    
+    insert kdr
+    gbar_kdr = 1e-2
+    nimid_kdr = 0
+    nislope_kdr = 25
+    ntmid_kdr = 27
+    ntslope_kdr = 15
+    
+    insert ka
+    gbar_ka = 1e-2
+    amid_ka = 30
+    aslope_ka = 20
+    bmid_ka = 80
+    bslope_ka = 6
+    btau_ka = 15
+    atau_ka = 0.5
+    
+    insert kca_fast
+    gbar_kca_fast = 3e-2
+    cac_kca_fast = 7e-4
+    cas_kca_fast = 7.5e-5
+    v1_kca_fast = 50
+    v2_kca_fast = 53.5
+    s1_kca_fast = 11
+    s2_kca_fast = 27
+    aspeed_kca_fast = 1
+    bspeed_kca_fast = 1
+
+    insert kca_slow
+    gbar_kca_slow = 5e0
+    Ra_kca_slow = 0.3e-3
+    Rb_kca_slow = 6e-5
+    cac_kca_slow = 2.5e-4
+    cas_kca_slow = 2.5e-5
+    
+    insert cansc
+    gbar_cansc = 1e-4
+    beta_cansc = 1e-4
+    cac_cansc = 6e-4
+    cas_cansc = 2e-5
+    ratc_cansc = 1e-1
+    x_cansc = 1
+    erev_cansc = -38
+    taumin_cansc = -0.1e0
+    
+    insert ih
+    gbar_ih = 1e-4
+    vhalf_ih = -72
+    vslope1_ih = 8.2
+    vslope2_ih = 11.9
+    tmc1_ih = 537
+    tmc2_ih = 56
+    
+}

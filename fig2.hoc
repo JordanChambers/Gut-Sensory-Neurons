@@ -1,0 +1,111 @@
+{load_file("stdlib.hoc")}
+celsius=36
+{load_file("soma.hoc")}
+access soma
+
+//conductance
+gbar_kca_slow = 0.5e0
+gbar_cansc = 3e-4
+beta_cansc = 7.5e-4
+gbar_ih = 0.5e-4
+
+///// Conductance changes for panel D2 /////
+///// Using Ih only /////
+//gbar_ih = 5e-4
+
+///// Using Ih, cansc, kca_slow and ka /////
+//gbar_kca_slow = 0.25e0
+//gbar_cansc = 0.3e-4
+//gbar_ih = 1e-4
+//gbar_ka = 0.5e-2
+
+///// Using BK, Ih, ka, kca_slow /////
+//gbar_kca_slow = 0.5e0
+//gbar_cansc = 1e-4
+//gbar_ih = 1e-4
+//gbar_ka = 0.5e-2
+//gbar_kca_fast = 3e-2
+
+
+//inserting current clamp at soma
+///// comment out the relevent stim to produce panels A2 and B2 /////
+access soma
+objectvar stim1
+stim1 = new IClamp(0.5)
+stim1.del = 100
+stim1.dur = 10
+stim1.amp = 0.25
+
+objectvar stim2
+stim2 = new IClamp(0.5)
+stim2.del = 120
+stim2.dur = 10
+stim2.amp = 0.25
+
+objectvar stim3
+stim3 = new IClamp(0.5)
+stim3.del = 140
+stim3.dur = 10
+stim3.amp = 0.25
+
+objectvar stim4
+stim4 = new IClamp(0.5)
+stim4.del = 160
+stim4.dur = 10
+stim4.amp = 0.25
+
+objectvar stim5
+stim5 = new IClamp(0.5)
+stim5.del = 180
+stim5.dur = 10
+stim5.amp = 0.25
+
+//integration time step
+dt = 0.01
+tstop = 1000
+
+//for writing result files
+objref vrec[1]
+vrec[0] = new Vector()
+{vrec[0].record(&soma.v(0.5), dt)}
+objref tvec
+tvec = new Vector()
+{tvec.record(&t, dt)}
+objref all
+all = new File()
+strdef datei
+
+objref gmem
+gmem = new Graph()
+gmem.size(0, tstop, -100, 50)
+gmem.addvar("Membrane Potential", &soma.v(0.5), 2, 1)
+gmem.begin()
+
+//defining some functions
+proc run_sn() {
+    sprint(datei, "./fig2currents.txt")
+    all.wopen(datei)
+    soma v = -55
+    finitialize()
+    while (t < tstop) {
+	fadvance()
+	all.printf("%g %g %g %g %g %g %g %g %g %g %g\n", t, cai, jina13_nav13, jina17_nav17, ica, jikdr_kdr, jika_ka, jikcaf_kca_fast, iother2, jikcas_kca_slow, jiih_ih)
+	gmem.plot(t)
+    }
+    gmem.flush()
+    all.close
+    write_file()
+}
+
+proc write_file() {
+    sprint(datei, "./fig2mp.txt")
+    all.wopen(datei)
+    for i=0, vrec[0].size()-1 {
+        all.printf("%g %g\n", tvec.x(i), vrec[0].x(i))
+    }
+    all.close
+    
+}
+
+run_sn()
+//quit()

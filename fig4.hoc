@@ -1,0 +1,83 @@
+{load_file("stdlib.hoc")}
+celsius=36
+{load_file("soma.hoc")}
+access soma
+
+//conductances
+gnabar_nav17 = 20e-1
+gbar_ih = 1e-4
+
+proc default_var() {localobj s, pc
+	s = new String()
+	if (name_declared($s1) == 0) {
+		if (argtype(2) == 2) {
+			sprint(s.s, "~strdef %s", $s1)
+			execute(s.s)
+			sprint(s.s, "%s = \"%s\"", $s1, $s2)
+		}else{
+			hoc_ac_ = $2
+			sprint(s.s, "%s = hoc_ac_", $s1)
+		}
+		execute(s.s)
+	}
+	pc = new ParallelContext()
+	if (pc.id == 0) {
+		sprint(s.s, "print \"%s  \", %s", $s1, $s1)
+		execute(s.s)
+	}
+}
+
+//integration time step
+dt = 0.01
+tstop = 1100
+
+//inserting current clamp at soma
+access soma
+objectvar stim
+stim = new IClamp(0.5)
+stim.del = 100 
+stim.dur = 500
+///// change the amplitude to produce the different depolarising currents //////
+stim.amp = -0.1
+
+//for writing result files
+objref vrec[1]
+vrec[0] = new Vector()
+{vrec[0].record(&soma.v(0.5), dt)}
+objref tvec
+tvec = new Vector()
+{tvec.record(&t, dt)}
+objref all
+all = new File()
+strdef datei
+
+//graph
+objref gmem
+gmem = new Graph()
+gmem.size(0, tstop, -100, 50)
+{gmem.addvar("Membrane Potential", &soma.v(0.5), 2, 1)}
+gmem.begin()
+
+//defining some functions
+proc run_sn() {
+	soma v = -55.0
+	finitialize()
+	while (t < tstop) {
+	    fadvance()
+	    gmem.plot(t)
+	}
+	gmem.flush()
+	write_file()
+}
+
+proc write_file() {
+    sprint(datei, "./fig4mem.txt")
+    all.wopen(datei)
+    for i=0, vrec[0].size()-1 {
+        all.printf("%g %g\n", tvec.x(i), vrec[0].x(i))
+    }
+    all.close
+}
+
+run_sn()
+//quit()
